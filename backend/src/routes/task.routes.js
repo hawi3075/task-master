@@ -1,14 +1,12 @@
-// backend/src/routes/task.routes.js
+import express from 'express';
+import { getTasks, createTask, updateTask, deleteTask } from '../controllers/task.controller.js';
+import { authenticateToken } from '../middleware/auth.middleware.js';
 
-const express = require('express');
 const router = express.Router();
-const taskController = require('../controllers/task.controller');
-const authMiddleware = require('../middleware/auth.middleware'); 
 
-// All task routes require authentication (authMiddleware)
-router.get('/', authMiddleware, taskController.getAllTasks);
-router.post('/', authMiddleware, taskController.createTask);
-router.put('/:id', authMiddleware, taskController.updateTask);
-router.delete('/:id', authMiddleware, taskController.deleteTask);
+router.get('/', authenticateToken, getTasks);
+router.post('/', authenticateToken, createTask);
+router.put('/:id', authenticateToken, updateTask);
+router.delete('/:id', authenticateToken, deleteTask);
 
-module.exports = router;
+export default router;

@@ -1,32 +1,18 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config(); 
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRoutes from './src/routes/auth.routes.js';
+import taskRoutes from './src/routes/task.routes.js';
 
-// --- Configuration Imports ---
-require('./src/config/db.config'); // Initialize DB pool and connection check
-// --- Route Imports (Will be added in Step 4) ---
-const authRoutes = require('./src/routes/auth.routes'); 
-const taskRoutes = require('./src/routes/task.routes'); 
-// -----------------------------
-
+dotenv.config();
 const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
+
 const PORT = process.env.PORT || 5000;
-
-// Middleware
-app.use(cors()); // Allow cross-origin requests from the frontend
-app.use(express.json()); // Allow parsing JSON request bodies
-
-// --- Route Usage (Will be used in Step 4) ---
-app.use('/api/auth', authRoutes); // Auth routes (register, login)
-app.use('/api/tasks', taskRoutes); // Task CRUD routes
-// -----------------------------
-
-// Simple Test Route
-app.get('/', (req, res) => {
-    res.send('TaskMaster Backend is Running!');
-});
-
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Backend running on port ${PORT}`));

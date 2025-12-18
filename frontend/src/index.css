@@ -1,3 +1,29 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities; 
+@import "tailwindcss";
+@import "tailwindcss";
+
+/* 1. Force light mode and grey background */
+:root {
+  background-color: #f3f4f6; /* Light grey */
+  color: #1f2937;
+  color-scheme: light !important;
+}
+
+/* 2. Fix the "Small Centered Box" issue */
+#root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  text-align: left; /* Stop centering everything */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f3f4f6;
+}
+
+/* 3. Remove any hidden overlays that make the screen unresponsive */
+div[class*="backdrop"], .fixed.inset-0.bg-black\/50 {
+  display: none !important;
+}

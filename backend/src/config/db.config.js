@@ -1,18 +1,15 @@
-const { Pool } = require('pg');
+import pkg from 'pg';
+const { Pool } = pkg;
+import dotenv from 'dotenv';
+dotenv.config();
 
-// Pool automatically uses the PGUSER, PGPASSWORD, etc. from .env
-const pool = new Pool();
-
-// Simple check query to confirm connection on startup
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('Error connecting to the database:', err.stack);
-  } else {
-    console.log('PostgreSQL: Database connected successfully.');
-  }
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: String(process.env.DB_PASSWORD),
+    port: process.env.DB_PORT,
 });
 
-module.exports = {
-  query: (text, params) => pool.query(text, params),
-  pool,
-};
+pool.on('connect', () => console.log('✅ Connected to Database'));
+export default pool;

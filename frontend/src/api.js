@@ -1,19 +1,19 @@
-// frontend/src/api.js
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api', // Base URL for both tasks and auth
+    baseURL: 'http://localhost:5000/api', // Make sure this matches your backend port
 });
 
-// Request interceptor to attach the token before every request
-api.interceptors.request.use(config => {
+// This sends your token automatically so the backend knows who you are
+api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
-        config.headers['x-auth-token'] = token;
+        config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-}, error => {
-    return Promise.reject(error);
 });
 
-export default api;
+export const getTasks = () => api.get('/tasks');
+export const createTask = (data) => api.post('/tasks', data);
+export const updateTask = (id, data) => api.put(`/tasks/${id}`, data);
+export const deleteTask = (id) => api.delete(`/tasks/${id}`);
