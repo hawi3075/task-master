@@ -1,22 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../AuthContext'; // Ensure this path is correct
+import { useAuth } from '../AuthContext'; 
 
 const Navbar = () => {
     const { user } = useAuth();
 
-    /**
-     * Complete Logout Logic:
-     * 1. Clears all LocalStorage (tokens and user data)
-     * 2. Force-replaces the URL to /login
-     * 3. Triggers a full browser reload to kill any stuck CSS/Overlays
-     */
+   
     const handleLogout = () => {
-        // Clear all storage to remove old tokens and user objects
+       
         localStorage.clear();
         
-        // Force a total browser reload to the login page
-        // This removes the dark overlay and resets the React state
+        
         window.location.replace('/login'); 
     };
 
@@ -33,7 +27,7 @@ const Navbar = () => {
                     </li>
                 )}
                 <li>
-                    {/* The Logout Button triggers the hard reset */}
+                   
                     <button onClick={handleLogout} style={styles.logoutBtn}>
                         Logout
                     </button>
@@ -49,9 +43,9 @@ const styles = {
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '10px 20px',
-        backgroundColor: '#2563eb', // Solid blue header
+        backgroundColor: '#2563eb', 
         color: '#fff',
-        zIndex: 1000, // Ensures it stays above overlays
+        zIndex: 1000, 
         position: 'relative'
     },
     logo: {
@@ -71,7 +65,7 @@ const styles = {
         fontWeight: '500'
     },
     logoutBtn: {
-        backgroundColor: '#ef4444', // Red for logout
+        backgroundColor: '#ef4444', 
         color: 'white',
         border: 'none',
         padding: '8px 16px',

@@ -1,4 +1,4 @@
-// frontend/src/AuthForm.jsx (Simplified for guide)
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
@@ -19,7 +19,7 @@ const AuthForm = () => {
         try {
             const response = await axios.post(endpoint, { email, password });
             
-            // On success, call the login function from AuthContext
+           
             login(response.data.token, response.data.user);
         } catch (err) {
             setError(err.response?.data?.error || 'An error occurred.');
@@ -33,7 +33,7 @@ const AuthForm = () => {
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Input Fields (Email, Password) */}
+                
                 <input
                     type="email"
                     placeholder="Email"
@@ -51,10 +51,9 @@ const AuthForm = () => {
                     required
                 />
 
-                {/* Error Message */}
                 {error && <p className="text-red-500 text-sm">{error}</p>}
 
-                {/* Submit Button */}
+              
                 <button
                     type="submit"
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-150"
@@ -63,7 +62,7 @@ const AuthForm = () => {
                 </button>
             </form>
 
-            {/* Toggle Button */}
+           
             <div className="mt-6 text-center">
                 <button
                     onClick={() => setIsLogin(!isLogin)}

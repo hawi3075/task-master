@@ -5,7 +5,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true); // <--- Added this
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const storedToken = localStorage.getItem('token');
@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
             setToken(storedToken);
             setUser(JSON.parse(storedUser));
         }
-        setLoading(false); // Authentication check is done
+        setLoading(false); 
     }, []);
 
     const login = (newToken, newUser) => {

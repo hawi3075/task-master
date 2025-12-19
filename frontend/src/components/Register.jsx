@@ -9,7 +9,7 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Adjust the URL to match your backend port (usually 5000)
+            
             await axios.post('http://localhost:5000/api/auth/register', formData);
             alert("Registration successful! You can now login.");
             navigate('/login');

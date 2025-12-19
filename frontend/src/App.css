@@ -1,12 +1,12 @@
-/* Force a light, clean background */
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light; /* Forces light mode */
+  color-scheme: light; 
   color: #213547;
-  background-color: #f3f4f6; /* Light grey background */
+  background-color: #f3f4f6; 
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -14,24 +14,24 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Fix the root container so it doesn't center everything in a small box */
+
 #root {
   width: 100%;
   margin: 0;
   padding: 0;
-  text-align: left; /* Change from center to left for dashboard feel */
+  text-align: left; 
 }
 
 body {
   margin: 0;
   display: flex;
-  place-items: flex-start; /* Start from top */
+  place-items: flex-start;
   min-width: 320px;
   min-height: 100vh;
   background-color: #f3f4f6;
 }
 
-/* Remove any accidental dark overlays */
+
 .modal-backdrop, .overlay {
   display: none !important;
 }

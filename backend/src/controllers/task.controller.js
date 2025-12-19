@@ -17,14 +17,41 @@ export const createTask = async (req, res) => {
         res.json(result.rows[0]);
     } catch (err) { res.status(500).json({ error: err.message }); }
 };
+
+
 export const updateTask = async (req, res) => {
+    const { id } = req.params; 
+    const { description, due_time, category, completed } = req.body; 
+    const userId = req.user.id; 
+
     try {
-        const { id } = req.params;
-        const { title, description, status } = req.body;
-        // ... your database logic ...
-        res.json({ message: "Task updated" });
+        
+        const result = await pool.query(
+            `UPDATE tasks 
+             SET description = $1, 
+                 due_time = $2, 
+                 category = $3, 
+                 completed = $4 
+             WHERE id = $5 AND user_id = $6 
+             RETURNING *`,
+            [
+                description, 
+                due_time || null, 
+                category || 'General', 
+                completed !== undefined ? completed : false, 
+                id, 
+                userId
+            ]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "Task not found or unauthorized" });
+        }
+
+        res.json(result.rows[0]); 
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("UPDATE ERROR:", err.message);
+        res.status(500).json({ error: "Database update failed" });
     }
 };
 
