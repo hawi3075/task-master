@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-// 1. Ensure this points to your api.js where registerUser is defined
 import { registerUser } from '../api'; 
 
 const Register = () => {
-    // Correctly structured state to match your database columns
+    // Initializing with empty strings ensures no 'null' values are sent
     const [formData, setFormData] = useState({ 
         username: '', 
         email: '', 
@@ -14,21 +13,7 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            // Sends { username, email, password } to your Render backend
-            await registerUser(formData); 
-            alert("Registration successful! You can now login.");
-            navigate('/login');
-        } catch (err) {
-            console.error("Registration Error:", err);
-            // This captures the "null value" or "already exists" errors from the server
-            alert(err.response?.data?.error || "Registration failed. Try again.");
-        }
-    };
-
-    // Helper to update state
+    // This function ensures the state updates correctly for each field
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -36,12 +21,25 @@ const Register = () => {
         });
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            // Sending the formData object to your Render backend
+            await registerUser(formData); 
+            alert("Registration successful! You can now login.");
+            navigate('/login');
+        } catch (err) {
+            console.error("Registration Error:", err.response?.data || err.message);
+            alert(err.response?.data?.error || "Registration failed. Try again.");
+        }
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-96">
                 <h2 className="text-2xl font-bold mb-6 text-center text-blue-800">Register for TaskMaster</h2>
                 
-                {/* Username Field - 'name' attribute must match state key */}
+                {/* Username Field - 'name' attribute must match 'username' */}
                 <input 
                     type="text" 
                     placeholder="Username" 
@@ -52,7 +50,6 @@ const Register = () => {
                     onChange={handleChange}
                 />
 
-                {/* Email Field */}
                 <input 
                     type="email" 
                     placeholder="Email" 
@@ -63,7 +60,6 @@ const Register = () => {
                     onChange={handleChange}
                 />
 
-                {/* Password Field with Eye Toggle */}
                 <div style={{ position: 'relative' }}>
                     <input 
                         type={showPassword ? "text" : "password"} 
