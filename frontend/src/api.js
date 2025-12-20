@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // Changed from localhost to your live Render URL
-   baseURL: 'https://task-master-dzpm.onrender.com/api', 
+    baseURL: 'https://task-master-dzpm.onrender.com/api', 
 });
 
 api.interceptors.request.use((config) => {
@@ -13,7 +12,14 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+// Auth Routes (Add these!)
+export const registerUser = (userData) => api.post('/auth/register', userData);
+export const loginUser = (userData) => api.post('/auth/login', userData);
+
+// Task Routes
 export const getTasks = () => api.get('/tasks');
 export const createTask = (data) => api.post('/tasks', data);
 export const updateTask = (id, data) => api.put(`/tasks/${id}`, data);
 export const deleteTask = (id) => api.delete(`/tasks/${id}`);
+
+export default api;
