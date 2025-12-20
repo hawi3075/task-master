@@ -7,7 +7,8 @@ const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [timeInterval, setTimeInterval] = useState(''); // New State
+  const [timeInterval, setTimeInterval] = useState(''); 
+  const [taskDate, setTaskDate] = useState(''); // New State for Calendar
   const [editId, setEditId] = useState(null);
 
   const fetchTasks = async () => {
@@ -29,7 +30,8 @@ const Dashboard = () => {
       const taskData = { 
         title, 
         description,
-        timeInterval // Sending to backend
+        timeInterval,
+        taskDate // Now sending both Time and Date
       };
 
       if (editId) {
@@ -41,33 +43,18 @@ const Dashboard = () => {
       
       setTitle('');
       setDescription('');
-      setTimeInterval(''); // Reset field
+      setTimeInterval('');
+      setTaskDate('');
       fetchTasks(); 
     } catch (err) {
-      alert("Error saving task");
-    }
-  };
-
-  const startEdit = (task) => {
-    setEditId(task.id);
-    setTitle(task.title);
-    setDescription(task.description || '');
-    setTimeInterval(task.time_interval || ''); // Load for edit
-  };
-
-  const handleDeleteTask = async (id) => {
-    if (window.confirm("Delete this task?")) {
-      try {
-        await deleteTask(id);
-        fetchTasks();
-      } catch (err) {
-        console.error("Error deleting task:", err);
-      }
+      // If you see this alert, check your Render backend logs!
+      alert("Error saving task. Make sure database columns match!");
     }
   };
 
   return (
     <div style={{ padding: '20px', maxWidth: '700px', margin: 'auto', fontFamily: 'Arial' }}>
+      {/* Header section matches your working dashboard */}
       <div style={{ backgroundColor: '#2563eb', color: 'white', padding: '15px 25px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h2 style={{ margin: 0 }}>TaskMaster</h2>
         <button onClick={logout} style={{ backgroundColor: '#ef4444', border: 'none', color: 'white', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>LOGOUT</button>
@@ -78,18 +65,27 @@ const Dashboard = () => {
         
         <input 
           style={{ width: '100%', padding: '12px', marginBottom: '10px', boxSizing: 'border-box', borderRadius: '5px', border: '1px solid #ccc' }}
-          placeholder="Task Title" 
+          placeholder="Task Title (required)" 
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
         
-        <input 
-          style={{ width: '100%', padding: '12px', marginBottom: '10px', boxSizing: 'border-box', borderRadius: '5px', border: '1px solid #ccc' }}
-          placeholder="Time Interval (e.g., 5 to 6 PM)" 
-          value={timeInterval}
-          onChange={(e) => setTimeInterval(e.target.value)}
-        />
+        {/* ROW FOR TIME AND CALENDAR */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+          <input 
+            style={{ flex: 1, padding: '12px', borderRadius: '5px', border: '1px solid #ccc' }}
+            placeholder="Time (e.g., 5 to 6 PM)" 
+            value={timeInterval}
+            onChange={(e) => setTimeInterval(e.target.value)}
+          />
+          <input 
+            type="date"
+            style={{ flex: 1, padding: '12px', borderRadius: '5px', border: '1px solid #ccc' }}
+            value={taskDate}
+            onChange={(e) => setTaskDate(e.target.value)}
+          />
+        </div>
 
         <textarea 
           style={{ width: '100%', padding: '12px', marginBottom: '10px', boxSizing: 'border-box', borderRadius: '5px', border: '1px solid #ccc', fontFamily: 'inherit' }}
@@ -103,16 +99,21 @@ const Dashboard = () => {
         </button>
       </form>
 
+      {/* Task List display */}
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {tasks.map(t => (
           <li key={t.id} style={{ padding: '15px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f9fafb', marginBottom: '8px', borderRadius: '5px' }}>
             <div>
               <div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#1e3a8a' }}>{t.title}</div>
-              {t.time_interval && <div style={{ color: '#2563eb', fontWeight: 'bold', fontSize: '0.9rem' }}>⏰ {t.time_interval}</div>}
+              <div style={{ display: 'flex', gap: '15px', fontSize: '0.85rem', color: '#2563eb', margin: '4px 0' }}>
+                {t.time_interval && <span>⏰ {t.time_interval}</span>}
+                {t.task_date && <span>📅 {new Date(t.task_date).toLocaleDateString()}</span>}
+              </div>
               <div style={{ color: '#4b5563', fontSize: '0.9rem' }}>{t.description}</div>
             </div>
+            {/* Action buttons */}
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={() => startEdit(t)} style={{ backgroundColor: '#fbbf24', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
+              <button onClick={() => setEditId(t.id)} style={{ backgroundColor: '#fbbf24', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
               <button onClick={() => handleDeleteTask(t.id)} style={{ backgroundColor: '#fee2e2', color: '#dc2626', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
             </div>
           </li>

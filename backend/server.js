@@ -21,9 +21,9 @@ app.use('/api/tasks', taskRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-// This function automatically creates your tables since you can't access the Shell
+// This function automatically creates and UPDATES your tables
 const initDatabase = async () => {
-    const queryText = `
+    const createTablesQuery = `
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       username VARCHAR(255) NOT NULL,
@@ -31,18 +31,27 @@ const initDatabase = async () => {
       password VARCHAR(255) NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+
     CREATE TABLE IF NOT EXISTS tasks (
-           id SERIAL PRIMARY KEY,
-           user_id INTEGER REFERENCES users(id),
-           title VARCHAR(255) NOT NULL,
-           description TEXT,
-           time_interval VARCHAR(100), -- New column for "5 to 6" or "17:00-18:00"
-           status VARCHAR(50) DEFAULT 'pending',
-           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );`;
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      title VARCHAR(255) NOT NULL,
+      description TEXT,
+      time_interval VARCHAR(100),
+      task_date DATE, -- New column for the calendar property
+      status VARCHAR(50) DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`;
+
     try {
-        await pool.query(queryText);
-        console.log("✅ Database tables initialized and ready!");
+        // 1. Run the initial table creation
+        await pool.query(createTablesQuery);
+
+        // 2. Force add columns if they don't exist (for existing tables on Render)
+        await pool.query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS time_interval VARCHAR(100);`);
+        await pool.query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS task_date DATE;`);
+
+        console.log("✅ Database tables initialized and updated with calendar columns!");
     } catch (err) {
         console.error("❌ Database initialization failed:", err);
     }
