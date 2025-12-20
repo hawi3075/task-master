@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// 1. Import the register function from your api.js file
+import { registerUser } from '../api'; 
 import { useNavigate, Link } from 'react-router-dom';
 
 const Register = () => {
@@ -9,16 +10,19 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // 2. Use the function we defined in api.js instead of axios.post('localhost...')
+            await registerUser(formData);
             
-            await axios.post('http://localhost:5000/api/auth/register', formData);
             alert("Registration successful! You can now login.");
             navigate('/login');
         } catch (err) {
             console.error(err);
+            // 3. This will now show the actual error from your Render backend
             alert(err.response?.data?.error || "Registration failed. Try again.");
         }
     };
-
+    
+    // ... rest of your return code stays the same
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-96">

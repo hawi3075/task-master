@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// 1. Import the task functions from your api.js
+import { getTasks, createTask, updateTask, deleteTask } from '../api'; 
 import { useAuth } from '../AuthContext'; 
 
 const Dashboard = () => {
@@ -10,16 +11,14 @@ const Dashboard = () => {
   const [category, setCategory] = useState('General');
   const [editId, setEditId] = useState(null);
 
-  const token = localStorage.getItem('token');
-
+  // 2. We no longer need to manually handle tokens here because api.js handles it!
   const fetchTasks = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/tasks', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      // Use the helper function from api.js
+      const res = await getTasks();
       setTasks(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching tasks:", err);
     }
   };
 
@@ -31,16 +30,12 @@ const Dashboard = () => {
     e.preventDefault();
     try {
       if (editId) {
-        await axios.put(`http://localhost:5000/api/tasks/${editId}`, 
-          { description, due_time: dueTime, category },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        // Use the helper function from api.js
+        await updateTask(editId, { description, due_time: dueTime, category });
         setEditId(null);
       } else {
-        await axios.post('http://localhost:5000/api/tasks', 
-          { description, due_time: dueTime, category },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        // Use the helper function from api.js
+        await createTask({ description, due_time: dueTime, category });
       }
       setDescription('');
       setDueTime('');
@@ -60,15 +55,14 @@ const Dashboard = () => {
     setCategory(task.category);
   };
 
-  const handleDelete = async (id) => {
+  const handleDeleteTask = async (id) => {
     if (window.confirm("Delete this task?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        // Use the helper function from api.js
+        await deleteTask(id);
         fetchTasks();
       } catch (err) {
-        console.error(err);
+        console.error("Error deleting task:", err);
       }
     }
   };
@@ -108,7 +102,7 @@ const Dashboard = () => {
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
               <button onClick={() => startEdit(t)} style={{ backgroundColor: '#fbbf24', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Update</button>
-              <button onClick={() => handleDelete(t.id)} style={{ backgroundColor: '#fee2e2', color: '#dc2626', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
+              <button onClick={() => handleDeleteTask(t.id)} style={{ backgroundColor: '#fee2e2', color: '#dc2626', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
             </div>
           </li>
         ))}

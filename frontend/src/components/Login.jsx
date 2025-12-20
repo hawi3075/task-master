@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// 1. Import the live API function
+import { loginUser } from '../api'; 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext'; 
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
-   
+    // State for the "eye" property
     const [showPassword, setShowPassword] = useState(false);
     
     const { login } = useAuth(); 
@@ -16,13 +16,15 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+            // 2. Uses the Render URL defined in your api.js
+            const res = await loginUser({ email, password });
+            
             if (res.data.token && res.data.user) {
                 login(res.data.token, res.data.user); 
                 navigate('/');
             }
         } catch (err) {
-            alert("Invalid login credentials");
+            alert(err.response?.data?.error || "Invalid login credentials");
         }
     };
 
@@ -40,7 +42,7 @@ const Login = () => {
                     required 
                 />
 
-               
+                {/* Password Input with Eye Toggle */}
                 <div style={{ position: 'relative' }}>
                     <input 
                         type={showPassword ? "text" : "password"} 
@@ -51,7 +53,6 @@ const Login = () => {
                         required 
                     />
                     
-                   
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
@@ -70,7 +71,6 @@ const Login = () => {
     );
 };
 
-
 const styles = {
     container: { display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f3f4f6' },
     form: { backgroundColor: 'white', padding: '40px', borderRadius: '10px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', width: '100%', maxWidth: '400px' },
@@ -78,8 +78,6 @@ const styles = {
     input: { width: '100%', padding: '12px', marginBottom: '15px', borderRadius: '5px', border: '1px solid #d1d5db', boxSizing: 'border-box' },
     button: { width: '100%', padding: '12px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' },
     footer: { textAlign: 'center', marginTop: '15px', fontSize: '14px' },
-    
-    
     eyeBtn: {
         position: 'absolute',
         right: '10px',
