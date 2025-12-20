@@ -17,21 +17,14 @@ export const getTasks = async (req, res) => {
 // --- CREATE TASK ---
 export const createTask = async (req, res) => {
     try {
-        // We use 'title' and 'description' to match your server.js initDatabase
-        const { title, description } = req.body; 
-        
-        if (!title) {
-            return res.status(400).json({ error: "Title is required" });
-        }
-
+        const { title, description, timeInterval } = req.body; 
         const result = await pool.query(
-            "INSERT INTO tasks (title, description, user_id) VALUES ($1, $2, $3) RETURNING *",
-            [title, description || '', req.user.id]
+            "INSERT INTO tasks (title, description, time_interval, user_id) VALUES ($1, $2, $3, $4) RETURNING *",
+            [title, description, timeInterval, req.user.id]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) { 
-        console.error("INSERT ERROR:", err.message);
-        res.status(500).json({ error: "Database insert failed: " + err.message }); 
+        res.status(500).json({ error: err.message }); 
     }
 };
 

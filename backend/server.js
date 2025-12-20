@@ -32,13 +32,14 @@ const initDatabase = async () => {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS tasks (
-      id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id),
-      title VARCHAR(255) NOT NULL,
-      description TEXT,
-      status VARCHAR(50) DEFAULT 'pending',
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );`;
+           id SERIAL PRIMARY KEY,
+           user_id INTEGER REFERENCES users(id),
+           title VARCHAR(255) NOT NULL,
+           description TEXT,
+           time_interval VARCHAR(100), -- New column for "5 to 6" or "17:00-18:00"
+           status VARCHAR(50) DEFAULT 'pending',
+           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );`;
     try {
         await pool.query(queryText);
         console.log("✅ Database tables initialized and ready!");
